@@ -1,25 +1,26 @@
 import { Response } from "express";
 import { JwtPayload } from "jsonwebtoken";
 import Leave from "../../models/leaveModel/leave";
+import Attendance from "../../models/attendanceModel/attendance";
 
-export const allEmployeeLeaveRequests = async (
+export const singleEmployeeAttendanceHistory = async (
   request: JwtPayload,
   response: Response
 ) => {
   try {
     const employeeId = request.params.id;
 
-    const employeeLeaveHistory = await Leave.find({ userId: employeeId });
+    const employeeAttendance = await Attendance.find({ employeeId });
 
-    if (employeeLeaveHistory.length < 1) {
+    if (employeeAttendance.length < 1) {
       return response.status(404).json({
-        message: "Employee has not requested for any leave yet",
+        message: "Employee has not clocked in ever",
       });
     }
 
     return response.status(200).json({
-      message: "Employee Leave History Fetched",
-      employeeLeaveHistory,
+      message: "Employee Attendance History fetched",
+      employeeAttendance
     });
   } catch (error: any) {
     console.log(error.message);

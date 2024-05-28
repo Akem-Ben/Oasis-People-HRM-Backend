@@ -3,14 +3,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.viewAllLeaveHistories = void 0;
+exports.viewSingleEmployeeLeave = void 0;
 const leave_1 = __importDefault(require("../../models/leaveModel/leave"));
-const viewAllLeaveHistories = async (request, response) => {
+const viewSingleEmployeeLeave = async (request, response) => {
     try {
-        const leave = await leave_1.default.find({});
-        if (leave.length < 1) {
+        const leaveId = request.params.id;
+        const leave = await leave_1.default.findOne({ _id: leaveId });
+        if (!leave) {
             return response.status(404).json({
-                message: 'No leave requests found',
+                message: 'Leave Request not found',
             });
         }
         return response.status(200).json({
@@ -25,4 +26,4 @@ const viewAllLeaveHistories = async (request, response) => {
         });
     }
 };
-exports.viewAllLeaveHistories = viewAllLeaveHistories;
+exports.viewSingleEmployeeLeave = viewSingleEmployeeLeave;

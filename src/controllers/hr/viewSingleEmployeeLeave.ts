@@ -1,15 +1,18 @@
 import { Response } from 'express';
 import { JwtPayload } from 'jsonwebtoken';
+import Employee from '../../models/employeeModel/employeeModel';
 import Leave from '../../models/leaveModel/leave';
 
 
-export const viewAllLeaveHistories = async(request:JwtPayload, response:Response) => {
+export const viewSingleEmployeeLeave = async(request:JwtPayload, response:Response) => {
     try{
-        const leave = await Leave.find({})
 
-        if(leave.length < 1){
+        const leaveId = request.params.id
+        const leave = await Leave.findOne({_id:leaveId})
+
+        if(!leave){
             return response.status(404).json({
-                message:'No leave requests found',
+                message:'Leave Request not found',
             })
         }
         

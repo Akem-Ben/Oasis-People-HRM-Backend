@@ -3,20 +3,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.allEmployeeLeaveRequests = void 0;
-const leave_1 = __importDefault(require("../../models/leaveModel/leave"));
-const allEmployeeLeaveRequests = async (request, response) => {
+exports.singleEmployeeAttendanceHistory = void 0;
+const attendance_1 = __importDefault(require("../../models/attendanceModel/attendance"));
+const singleEmployeeAttendanceHistory = async (request, response) => {
     try {
         const employeeId = request.params.id;
-        const employeeLeaveHistory = await leave_1.default.find({ userId: employeeId });
-        if (employeeLeaveHistory.length < 1) {
+        const employeeAttendance = await attendance_1.default.find({ employeeId });
+        if (employeeAttendance.length < 1) {
             return response.status(404).json({
-                message: "Employee has not requested for any leave yet",
+                message: "Employee has not clocked in ever",
             });
         }
         return response.status(200).json({
-            message: "Employee Leave History Fetched",
-            employeeLeaveHistory,
+            message: "Employee Attendance History fetched",
+            employeeAttendance
         });
     }
     catch (error) {
@@ -26,4 +26,4 @@ const allEmployeeLeaveRequests = async (request, response) => {
         });
     }
 };
-exports.allEmployeeLeaveRequests = allEmployeeLeaveRequests;
+exports.singleEmployeeAttendanceHistory = singleEmployeeAttendanceHistory;
