@@ -15,13 +15,13 @@ const employeeClockout = async (request, response) => {
                 message: "You have not clocked-in today"
             });
         }
-        const checkAttendance = await attendance_1.default.find({ employeeId, _id: attendanceId });
-        if (checkAttendance.length === 0) {
+        const checkAttendance = await attendance_1.default.findOne({ employeeId, _id: attendanceId });
+        if (!checkAttendance) {
             return response.status(400).json({
                 message: "You have not clockedIn today"
             });
         }
-        if (checkAttendance[0].clockOutTime !== null) {
+        if (checkAttendance.clockOutTime !== null) {
             return response.status(400).json({
                 message: "You have already clocked out"
             });
@@ -34,7 +34,7 @@ const employeeClockout = async (request, response) => {
         const today = new Date();
         const employeeCheckOutStatus = (0, helpersFunctions_1.checkClockOutTime)(today);
         await attendance_1.default.updateOne({ _id: attendanceId }, { $set: { clockOutTime: today, clockOutStatus: employeeCheckOutStatus } });
-        const attestCheckOut = await attendance_1.default.find({ _id: attendanceId });
+        const attestCheckOut = await attendance_1.default.findOne({ _id: attendanceId });
         if (!attestCheckOut) {
             return response.status(400).json({
                 message: "Unable to clock out, try again"

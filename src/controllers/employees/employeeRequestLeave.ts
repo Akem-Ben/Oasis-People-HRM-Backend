@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { JwtPayload } from "jsonwebtoken";
 import Employee from "../../models/employeeModel/employeeModel";
 import Leave from "../../models/leaveModel/leave";
@@ -19,9 +19,7 @@ export const employeeRequestLeave = async (
       });
     }
 
-    const employeeArr = await Employee.find({ _id: employeeId });
-
-    const employee = employeeArr[0];
+    const employee:any = await Employee.findOne({ _id: employeeId });
 
     if (
       employee.usedLeaveDays === employee.leaveDaysGiven ||
@@ -72,8 +70,8 @@ export const employeeRequestLeave = async (
       });
     }
 
-    const humanResources = await HR.find({});
-    const HrId = humanResources[0]._id;
+    const humanResources:any = await HR.findOne({});
+    const HrId = humanResources._id;
 
     const newLeaveRequest = await Leave.create({
       userId: employeeId,
@@ -87,9 +85,9 @@ export const employeeRequestLeave = async (
       HrId,
     });
 
-    const confirmLeaveRequest = await Leave.find({ _id: newLeaveRequest._id });
+    const confirmLeaveRequest = await Leave.findOne({ _id: newLeaveRequest._id });
 
-    if (confirmLeaveRequest.length === 0) {
+    if (!confirmLeaveRequest) {
       return response.status(400).json({
         message: "Leave request not submitted, try again",
       });

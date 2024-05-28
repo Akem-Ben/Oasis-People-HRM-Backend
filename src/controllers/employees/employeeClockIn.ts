@@ -1,4 +1,4 @@
-import {Request, Response} from "express";
+import {Response} from "express";
 import { JwtPayload } from "jsonwebtoken";
 import Attendance from "../../models/attendanceModel/attendance";
 import { checkClockInTime, confirmCheckIn, setHours } from "../../utilities/helpersFunctions";
@@ -35,7 +35,7 @@ export const employeeClockIn = async(request:JwtPayload, response:Response) => {
             clockInTime: new Date(),
             status: employeeAttendanceStatus
         })
-        const attestCheckIn = await Attendance.find({_id:newCheckIn._id});
+        const attestCheckIn = await Attendance.findOne({_id:newCheckIn._id});
 
         if(!attestCheckIn){
             return response.status(400).json({
@@ -57,7 +57,7 @@ export const employeeClockIn = async(request:JwtPayload, response:Response) => {
             clockOutStatus: ""
         })
 
-        const confirmFirstCheckIn = await Attendance.find({_id:employeeFirstCheckIn._id});
+        const confirmFirstCheckIn = await Attendance.findOne({_id:employeeFirstCheckIn._id});
 
         if(!confirmFirstCheckIn){
             return response.status(400).json({

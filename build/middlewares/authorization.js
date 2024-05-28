@@ -24,14 +24,14 @@ const employeeAuthoriser = async (request, response, next) => {
             });
         }
         const decode = jsonwebtoken_1.default.verify(mainToken, `${process.env.APP_SECRET}`);
-        const employee = await employeeModel_1.default.find({ _id: decode._id });
+        const employee = await employeeModel_1.default.findOne({ _id: decode._id });
         if (employee === null) {
             return response.status(400).json({
                 status: `error`,
                 message: `Login again`
             });
         }
-        if (employee[0].isManager) {
+        if (employee.isManager) {
             return response.status(400).json({
                 status: `error`,
                 message: `You are not allowed to access this resource. Only Employees`
@@ -72,14 +72,14 @@ const hrAuthoriser = async (request, response, next) => {
             });
         }
         const decode = jsonwebtoken_1.default.verify(mainToken, `${process.env.APP_SECRET}`);
-        const admin = await hrModel_1.default.find({ _id: decode._id });
+        const admin = await hrModel_1.default.findOne({ _id: decode._id });
         if (admin === null) {
             return response.status(400).json({
                 status: `error`,
                 message: `Login again`
             });
         }
-        if (!admin[0].isManager) {
+        if (!admin.isManager) {
             return response.status(400).json({
                 status: `error`,
                 message: `You are not allowed to access this resource. Contact the admin`

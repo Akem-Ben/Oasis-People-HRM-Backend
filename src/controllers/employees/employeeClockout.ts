@@ -1,7 +1,7 @@
-import {Request, Response} from "express";
+import {Response} from "express";
 import { JwtPayload } from "jsonwebtoken";
 import Attendance from "../../models/attendanceModel/attendance";
-import { checkClockInTime, checkClockOutTime, confirmCheckIn, setHours } from "../../utilities/helpersFunctions";
+import { checkClockOutTime } from "../../utilities/helpersFunctions";
 
 export const employeeClockout = async(request:JwtPayload, response:Response) => {
     try {
@@ -16,15 +16,15 @@ export const employeeClockout = async(request:JwtPayload, response:Response) => 
             });
         }
 
-        const checkAttendance:any = await Attendance.find({employeeId, _id:attendanceId});
+        const checkAttendance = await Attendance.findOne({employeeId, _id:attendanceId});
 
-        if(checkAttendance.length === 0){
+        if(!checkAttendance){
             return response.status(400).json({
                 message: "You have not clockedIn today"
             });
         }
 
-        if(checkAttendance[0].clockOutTime !== null){
+        if(checkAttendance.clockOutTime !== null){
             return response.status(400).json({
                 message: "You have already clocked out"
             });
@@ -42,7 +42,7 @@ export const employeeClockout = async(request:JwtPayload, response:Response) => 
 
         await Attendance.updateOne({ _id: attendanceId }, { $set: { clockOutTime: today, clockOutStatus: employeeCheckOutStatus } });
 
-        const attestCheckOut = await Attendance.find({_id:attendanceId});
+        const attestCheckOut = await Attendance.findOne({_id:attendanceId});
 
         if(!attestCheckOut){
             return response.status(400).json({

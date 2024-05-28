@@ -1,24 +1,23 @@
 import { Response } from 'express';
 import { JwtPayload } from 'jsonwebtoken';
-import Attendance from '../../models/attendanceModel/attendance';
+import Employee from '../../models/employeeModel/employeeModel';
 
 
-export const viewPersonalAttendanceRecord = async(request:JwtPayload, response:Response) => {
+export const viewProfile = async(request:JwtPayload, response:Response) => {
     try{
 
         const userId = request.user._id;
 
-        const attendance = await Attendance.find({employeeId:userId})
+        const user = await Employee.findOne({_id:userId})
 
-        if(attendance.length < 1){
+        if(!user){
             return response.status(404).json({
-                message:'No attendance record found',
-                attendance
+                message:'User not found',
             })
         }
         return response.status(200).json({
-            message: 'attendance records found',
-            attendance
+            message: 'User found',
+            user
         })
     }catch(error:any){
         console.log(error.message)

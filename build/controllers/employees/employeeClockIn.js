@@ -32,7 +32,7 @@ const employeeClockIn = async (request, response) => {
                 clockInTime: new Date(),
                 status: employeeAttendanceStatus
             });
-            const attestCheckIn = await attendance_1.default.find({ _id: newCheckIn._id });
+            const attestCheckIn = await attendance_1.default.findOne({ _id: newCheckIn._id });
             if (!attestCheckIn) {
                 return response.status(400).json({
                     message: "Unable to clock in, try again"
@@ -51,7 +51,7 @@ const employeeClockIn = async (request, response) => {
             clockOutTime: "",
             clockOutStatus: ""
         });
-        const confirmFirstCheckIn = await attendance_1.default.find({ _id: employeeFirstCheckIn._id });
+        const confirmFirstCheckIn = await attendance_1.default.findOne({ _id: employeeFirstCheckIn._id });
         if (!confirmFirstCheckIn) {
             return response.status(400).json({
                 message: "Unable to clock in, try again"

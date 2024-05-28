@@ -4,6 +4,7 @@ import { login } from '../../controllers/hr/loginHr';
 import { createEmployee } from '../../controllers/hr/createEmployee';
 import { upload } from '../../utilities/cloudinaryUpload';
 import { hrAuthoriser } from '../../middlewares/authorization';
+import { viewEmployees } from '../../controllers/hr/allEmployees';
 
 const router = express.Router();
 
@@ -11,5 +12,9 @@ const router = express.Router();
 router.post('/register', adminRegister)
 router.post('/login', login)
 router.post('/create-employee', hrAuthoriser,  upload.single("image"), createEmployee)
+router.get('/view-employees', hrAuthoriser, viewEmployees)
+
+
+
 
 export default router;

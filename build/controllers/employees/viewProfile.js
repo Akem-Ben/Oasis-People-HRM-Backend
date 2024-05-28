@@ -3,21 +3,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.viewPersonalAttendanceRecord = void 0;
-const attendance_1 = __importDefault(require("../../models/attendanceModel/attendance"));
-const viewPersonalAttendanceRecord = async (request, response) => {
+exports.viewProfile = void 0;
+const employeeModel_1 = __importDefault(require("../../models/employeeModel/employeeModel"));
+const viewProfile = async (request, response) => {
     try {
         const userId = request.user._id;
-        const attendance = await attendance_1.default.find({ employeeId: userId });
-        if (attendance.length < 1) {
+        const user = await employeeModel_1.default.findOne({ _id: userId });
+        if (!user) {
             return response.status(404).json({
-                message: 'No attendance record found',
-                attendance
+                message: 'User not found',
             });
         }
         return response.status(200).json({
-            message: 'attendance records found',
-            attendance
+            message: 'User found',
+            user
         });
     }
     catch (error) {
@@ -27,4 +26,4 @@ const viewPersonalAttendanceRecord = async (request, response) => {
         });
     }
 };
-exports.viewPersonalAttendanceRecord = viewPersonalAttendanceRecord;
+exports.viewProfile = viewProfile;

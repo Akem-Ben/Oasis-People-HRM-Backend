@@ -3,27 +3,21 @@ import { JwtPayload } from 'jsonwebtoken';
 import Leave from '../../models/leaveModel/leave';
 
 
-export const viewSingleLeave = async(request:JwtPayload, response:Response) => {
+export const viewLeaveHistory = async(request:JwtPayload, response:Response) => {
     try{
-        const leaveId = request.params.id;
-
-        if(!leaveId){
-            return response.status(400).json({
-                message:'Invalid request'
-            })
-        }
 
         const userId = request.user._id;
 
-        const leave = await Leave.findOne({ _id:leaveId, userId:userId})
+        const leave = await Leave.find({userId:userId})
 
-        if(!leave){
+        if(leave.length < 1){
             return response.status(404).json({
-                message:'Leave not found'
+                message:'No leave request',
+                leave
             })
         }
         return response.status(200).json({
-            message: 'Leave found',
+            message: 'Leave requests found',
             leave
         })
     }catch(error:any){

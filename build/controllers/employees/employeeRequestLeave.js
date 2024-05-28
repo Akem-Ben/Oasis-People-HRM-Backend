@@ -16,8 +16,7 @@ const employeeRequestLeave = async (request, response) => {
                 message: "Login again to clock in",
             });
         }
-        const employeeArr = await employeeModel_1.default.find({ _id: employeeId });
-        const employee = employeeArr[0];
+        const employee = await employeeModel_1.default.findOne({ _id: employeeId });
         if (employee.usedLeaveDays === employee.leaveDaysGiven ||
             employee.totalDaysLeft === 0) {
             return response.status(400).json({
@@ -55,8 +54,8 @@ const employeeRequestLeave = async (request, response) => {
                 message: `You only have ${employee.totalDaysLeft} leave days left`,
             });
         }
-        const humanResources = await hrModel_1.default.find({});
-        const HrId = humanResources[0]._id;
+        const humanResources = await hrModel_1.default.findOne({});
+        const HrId = humanResources._id;
         const newLeaveRequest = await leave_1.default.create({
             userId: employeeId,
             requestDate: new Date(),
@@ -68,8 +67,8 @@ const employeeRequestLeave = async (request, response) => {
             daysLeft: employee.totalDaysLeft - totalLeaveDays,
             HrId,
         });
-        const confirmLeaveRequest = await leave_1.default.find({ _id: newLeaveRequest._id });
-        if (confirmLeaveRequest.length === 0) {
+        const confirmLeaveRequest = await leave_1.default.findOne({ _id: newLeaveRequest._id });
+        if (!confirmLeaveRequest) {
             return response.status(400).json({
                 message: "Leave request not submitted, try again",
             });
