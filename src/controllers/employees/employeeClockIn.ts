@@ -33,7 +33,9 @@ export const employeeClockIn = async(request:JwtPayload, response:Response) => {
             date: new Date(),
             employeeId,
             clockInTime: new Date(),
-            status: employeeAttendanceStatus
+            clockInStatus: employeeAttendanceStatus,
+            clockOutTime: "",
+            clockOutStatus: ""
         })
         const attestCheckIn = await Attendance.findOne({_id:newCheckIn._id});
 

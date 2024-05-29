@@ -16,6 +16,8 @@ const viewAllLeaveHistories_1 = require("../../controllers/hr/viewAllLeaveHistor
 const viewAllAttendance_1 = require("../../controllers/hr/viewAllAttendance");
 const viewAllEmployeeLeaveRequests_1 = require("../../controllers/hr/viewAllEmployeeLeaveRequests");
 const viewSingleEmployeeAttendanceHistory_1 = require("../../controllers/hr/viewSingleEmployeeAttendanceHistory");
+const getAllDailyAttendance_1 = require("../../controllers/hr/getAllDailyAttendance");
+const getGraphAttendance_1 = require("../../controllers/hr/getGraphAttendance");
 const router = express_1.default.Router();
 router.post('/register', createHR_1.adminRegister);
 router.post('/login', loginHr_1.login);
@@ -27,4 +29,6 @@ router.get('/leave-histories', authorization_1.hrAuthoriser, viewAllLeaveHistori
 router.get('/all-attendance', authorization_1.hrAuthoriser, viewAllAttendance_1.allAttendanceHistories);
 router.get('/all-employee-leave/:id', authorization_1.hrAuthoriser, viewAllEmployeeLeaveRequests_1.allEmployeeLeaveRequests);
 router.get('/employee-attendance-history/:id', authorization_1.hrAuthoriser, viewSingleEmployeeAttendanceHistory_1.singleEmployeeAttendanceHistory);
+router.get('/daily-attendance', authorization_1.hrAuthoriser, getAllDailyAttendance_1.viewDailyAttendance);
+router.get('/graph-attendance', authorization_1.hrAuthoriser, getGraphAttendance_1.graphAttendance);
 exports.default = router;

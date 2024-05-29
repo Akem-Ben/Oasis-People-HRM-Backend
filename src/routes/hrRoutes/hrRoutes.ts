@@ -11,6 +11,8 @@ import { viewAllLeaveHistories } from '../../controllers/hr/viewAllLeaveHistorie
 import { allAttendanceHistories } from '../../controllers/hr/viewAllAttendance';
 import { allEmployeeLeaveRequests } from '../../controllers/hr/viewAllEmployeeLeaveRequests';
 import { singleEmployeeAttendanceHistory } from '../../controllers/hr/viewSingleEmployeeAttendanceHistory';
+import { viewDailyAttendance } from '../../controllers/hr/getAllDailyAttendance';
+import { graphAttendance } from '../../controllers/hr/getGraphAttendance';
 
 const router = express.Router();
 
@@ -25,7 +27,8 @@ router.get('/leave-histories', hrAuthoriser, viewAllLeaveHistories)
 router.get('/all-attendance', hrAuthoriser, allAttendanceHistories)
 router.get('/all-employee-leave/:id', hrAuthoriser, allEmployeeLeaveRequests)
 router.get('/employee-attendance-history/:id', hrAuthoriser, singleEmployeeAttendanceHistory)
-
+router.get('/daily-attendance', hrAuthoriser, viewDailyAttendance)
+router.get('/graph-attendance', hrAuthoriser, graphAttendance)
 
 
 

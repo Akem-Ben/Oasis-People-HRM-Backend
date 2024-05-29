@@ -1,27 +1,38 @@
 import { Response } from 'express';
 import { JwtPayload } from 'jsonwebtoken';
 import Attendance from '../../models/attendanceModel/attendance';
+import { formatTimeFromISO, setHours } from '../../utilities/helpersFunctions';
 import Employee from '../../models/employeeModel/employeeModel';
-import { formatDate, formatTimeFromISO } from '../../utilities/helpersFunctions';
 
 
-export const allAttendanceHistories = async(request:JwtPayload, response:Response) => {
+export const viewDailyAttendance = async(request:JwtPayload, response:Response) => {
     try{
-        const allAttendance = await Attendance.find({})
 
-        if(allAttendance.length < 1){
+        let today = new Date()
+
+        const newToday = setHours(today)
+
+
+        const attendance = await Attendance.find({})
+
+        const todaysAttendance = attendance.filter((attend)=>{
+            const checkInDate = new Date(attend.clockInTime)
+            checkInDate.setHours(0, 0, 0, 0)
+            return checkInDate.getTime() === newToday.getTime()
+        
+        })
+
+        if(todaysAttendance.length < 1){
             return response.status(404).json({
-                message:'No attendance history found',
+                message:'No attendance available',
+                todaysAttendance
             })
         }
 
-        allAttendance.sort((item1:any, item2:any)=> item2.date - item1.date)
-
-        const attendanceHistory = await Promise.all(allAttendance.map(async (attendance)=>{
+        const employeesDailyAttendance = await Promise.all(todaysAttendance.map(async (attendance)=>{
             const employee = await Employee.findOne({_id:attendance.employeeId})
 
             return {
-                date: formatDate(attendance.date),
                 attendanceId: attendance._id,
                 attendanceStatus: attendance.clockInStatus,
                 attendanceTime: formatTimeFromISO(attendance.clockInTime),
@@ -33,15 +44,13 @@ export const allAttendanceHistories = async(request:JwtPayload, response:Respons
                 employeeDesignation: employee?.designation,
                 employeeContractType: employee?.contractType,
                 employeeWorkType: employee?.employeeType,
-                checkOutTime: attendance.clockOutTime ? formatTimeFromISO(attendance.clockOutTime) : "-",
             }
         }))
 
         return response.status(200).json({
-            message:'All time Attendance',
-            attendanceHistory
+            message:'Todays Attendance',
+            employeesDailyAttendance
         })
-        
 
     }catch(error:any){
         console.log(error.message)

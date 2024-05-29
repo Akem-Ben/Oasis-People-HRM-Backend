@@ -30,7 +30,9 @@ const employeeClockIn = async (request, response) => {
                 date: new Date(),
                 employeeId,
                 clockInTime: new Date(),
-                status: employeeAttendanceStatus
+                clockInStatus: employeeAttendanceStatus,
+                clockOutTime: "",
+                clockOutStatus: ""
             });
             const attestCheckIn = await attendance_1.default.findOne({ _id: newCheckIn._id });
             if (!attestCheckIn) {
