@@ -3,26 +3,28 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteEmployee = void 0;
+exports.viewSingleEmployee = void 0;
 const employeeModel_1 = __importDefault(require("../../models/employeeModel/employeeModel"));
-const deleteEmployee = async (request, response) => {
+const viewSingleEmployee = async (request, response) => {
     try {
-        const id = request.params.id;
-        const employee = await employeeModel_1.default.findByIdAndDelete(id);
+        const employeeId = request.params.id;
+        console.log(employeeId);
+        const employee = await employeeModel_1.default.findOne({ _id: employeeId });
         if (!employee) {
             return response.status(404).json({
-                message: "Employee not found",
+                message: 'employee not found',
             });
         }
         return response.status(200).json({
-            message: "Employee deleted successfully",
+            message: 'employee found',
+            employee
         });
     }
     catch (error) {
-        console.error("Error deleting employee:", error.message);
+        console.log(error.message);
         return response.status(500).json({
-            message: "Internal Server Error"
+            message: 'Internal Server Error'
         });
     }
 };
-exports.deleteEmployee = deleteEmployee;
+exports.viewSingleEmployee = viewSingleEmployee;

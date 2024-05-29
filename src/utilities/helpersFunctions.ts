@@ -100,3 +100,16 @@ export const formatDate = (isoString: Date): string => {
 
   return `${day}-${month}-${year}`;
 };
+
+export const daysBetween = (startDate: Date, endDate: Date): string => {
+  // Convert the ISO string dates to Date objects
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  // Calculate the difference in time (milliseconds)
+  const diffTime = end.getTime() - start.getTime();
+  // Convert the difference from milliseconds to days
+  const diffDays = diffTime / (1000 * 60 * 60 * 24);
+  // Return the number of days
+ const finaldays = Math.round(diffDays);
+ return finaldays === 1 ? `${finaldays} day` : `${finaldays} days`
+}

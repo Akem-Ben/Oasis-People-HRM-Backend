@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.formatDate = exports.formatTimeFromISO = exports.confirmCheckIn = exports.checkClockOutTime = exports.checkClockInTime = exports.setHours = exports.generateEmployeeID = exports.tokenGenerator = exports.hashPassword = exports.generatePassword = void 0;
+exports.daysBetween = exports.formatDate = exports.formatTimeFromISO = exports.confirmCheckIn = exports.checkClockOutTime = exports.checkClockInTime = exports.setHours = exports.generateEmployeeID = exports.tokenGenerator = exports.hashPassword = exports.generatePassword = void 0;
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const generatePassword = (last_name) => {
@@ -103,3 +103,16 @@ const formatDate = (isoString) => {
     return `${day}-${month}-${year}`;
 };
 exports.formatDate = formatDate;
+const daysBetween = (startDate, endDate) => {
+    // Convert the ISO string dates to Date objects
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    // Calculate the difference in time (milliseconds)
+    const diffTime = end.getTime() - start.getTime();
+    // Convert the difference from milliseconds to days
+    const diffDays = diffTime / (1000 * 60 * 60 * 24);
+    // Return the number of days
+    const finaldays = Math.round(diffDays);
+    return finaldays === 1 ? `${finaldays} day` : `${finaldays} days`;
+};
+exports.daysBetween = daysBetween;

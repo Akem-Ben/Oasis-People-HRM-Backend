@@ -5,7 +5,7 @@ export interface IAttendance {
   date: Date;
   employeeId: string;
   clockInTime: Date;
-  clockOutTime: Date | null;
+  clockOutTime: Date;
   clockInStatus: string;
   clockOutStatus: string;
 }

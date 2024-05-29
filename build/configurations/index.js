@@ -11,7 +11,10 @@ const database = async () => {
         return conn;
     }
     else {
-        conn = await mongoose_1.default.connect("mongodb+srv://andaobong:8RhWB1aDgVSAtdr2@cluster0.twfwc1c.mongodb.net/oasis_hrm");
+        conn = await mongoose_1.default.connect("mongodb+srv://andaobong:8RhWB1aDgVSAtdr2@cluster0.twfwc1c.mongodb.net/oasis_hrm", {
+            serverSelectionTimeoutMS: 10000,
+            socketTimeoutMS: 45000
+        });
         console.log("Database connected");
         return conn;
     }

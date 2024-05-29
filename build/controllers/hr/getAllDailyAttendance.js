@@ -17,13 +17,14 @@ const viewDailyAttendance = async (request, response) => {
             checkInDate.setHours(0, 0, 0, 0);
             return checkInDate.getTime() === newToday.getTime();
         });
+        let employeesDailyAttendance = [];
         if (todaysAttendance.length < 1) {
             return response.status(404).json({
                 message: 'No attendance available',
-                todaysAttendance
+                employeesDailyAttendance
             });
         }
-        const employeesDailyAttendance = await Promise.all(todaysAttendance.map(async (attendance) => {
+        employeesDailyAttendance = await Promise.all(todaysAttendance.map(async (attendance) => {
             const employee = await employeeModel_1.default.findOne({ _id: attendance.employeeId });
             return {
                 attendanceId: attendance._id,

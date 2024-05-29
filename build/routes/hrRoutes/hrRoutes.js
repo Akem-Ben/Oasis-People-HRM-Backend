@@ -18,12 +18,15 @@ const viewAllEmployeeLeaveRequests_1 = require("../../controllers/hr/viewAllEmpl
 const viewSingleEmployeeAttendanceHistory_1 = require("../../controllers/hr/viewSingleEmployeeAttendanceHistory");
 const getAllDailyAttendance_1 = require("../../controllers/hr/getAllDailyAttendance");
 const getGraphAttendance_1 = require("../../controllers/hr/getGraphAttendance");
+const viewSingleEmployee_1 = require("../../controllers/hr/viewSingleEmployee");
+const editEmployeeProfile_1 = require("../../controllers/hr/editEmployeeProfile");
+const deleteEmployee_1 = require("../../controllers/hr/deleteEmployee");
 const router = express_1.default.Router();
 router.post('/register', createHR_1.adminRegister);
 router.post('/login', loginHr_1.login);
 router.post('/create-employee', authorization_1.hrAuthoriser, cloudinaryUpload_1.upload.single("image"), createEmployee_1.createEmployee);
 router.get('/view-employees', authorization_1.hrAuthoriser, allEmployees_1.viewEmployees);
-router.get('/single-leave/:id', authorization_1.hrAuthoriser, viewSingleEmployeeLeave_1.viewSingleEmployeeLeave);
+router.get('/single-leave/:id', authorization_1.hrAuthoriser, viewSingleEmployeeLeave_1.viewSingleEmployeeLeaves);
 router.post('/process-leave/:id', authorization_1.hrAuthoriser, processLeave_1.processEmployeeLeave);
 router.get('/leave-histories', authorization_1.hrAuthoriser, viewAllLeaveHistories_1.viewAllLeaveHistories);
 router.get('/all-attendance', authorization_1.hrAuthoriser, viewAllAttendance_1.allAttendanceHistories);
@@ -31,4 +34,7 @@ router.get('/all-employee-leave/:id', authorization_1.hrAuthoriser, viewAllEmplo
 router.get('/employee-attendance-history/:id', authorization_1.hrAuthoriser, viewSingleEmployeeAttendanceHistory_1.singleEmployeeAttendanceHistory);
 router.get('/daily-attendance', authorization_1.hrAuthoriser, getAllDailyAttendance_1.viewDailyAttendance);
 router.get('/graph-attendance', authorization_1.hrAuthoriser, getGraphAttendance_1.graphAttendance);
+router.get('/single-employee/:id', authorization_1.hrAuthoriser, viewSingleEmployee_1.viewSingleEmployee);
+router.put('/edit-employee/:id', authorization_1.hrAuthoriser, editEmployeeProfile_1.updateEmployeeProfile);
+router.delete('/delete/:id', authorization_1.hrAuthoriser, deleteEmployee_1.deleteEmployee);
 exports.default = router;

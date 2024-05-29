@@ -22,14 +22,16 @@ export const viewDailyAttendance = async(request:JwtPayload, response:Response) 
         
         })
 
+        let employeesDailyAttendance:any [] = [];
+
         if(todaysAttendance.length < 1){
             return response.status(404).json({
                 message:'No attendance available',
-                todaysAttendance
+                employeesDailyAttendance
             })
         }
 
-        const employeesDailyAttendance = await Promise.all(todaysAttendance.map(async (attendance)=>{
+         employeesDailyAttendance = await Promise.all(todaysAttendance.map(async (attendance)=>{
             const employee = await Employee.findOne({_id:attendance.employeeId})
 
             return {
