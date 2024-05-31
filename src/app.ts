@@ -29,7 +29,7 @@ database();
 
 
 app.get("/", (request: Request, response: Response) => {
-    response.send("Express Ready");
+    response.send("Oasis HRM is Ready...:)");
   });
 
 

@@ -26,7 +26,7 @@ app.use('/admin', hrRoutes_1.default);
 //database connection
 (0, configurations_1.database)();
 app.get("/", (request, response) => {
-    response.send("Express Ready");
+    response.send("Oasis HRM is Ready...:)");
 });
 //server
 app.listen(process.env.PORT, () => {
