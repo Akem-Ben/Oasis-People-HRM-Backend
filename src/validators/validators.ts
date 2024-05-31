@@ -4,8 +4,6 @@ export const registerEmployeeSchema = Joi.object().keys({
     firstName: Joi.string().required(),
     lastName: Joi.string().required(),
     email: Joi.string().email().required(),
-    middleName: Joi.string().required(),
-    nextOfKin: Joi.string().required(),
     phone: Joi.string().required(),
     gender: Joi.string().required(),
     birthDate: Joi.date().required(),
@@ -20,22 +18,13 @@ export const registerEmployeeSchema = Joi.object().keys({
     employeeType: Joi.string().required(),
     contractType: Joi.string().required(),
     workingDays: Joi.string().required(),
-    socialAccounts: Joi.string().required(),
+    image: Joi.string().allow(''),
     bankBranch: Joi.string().required(),
     bankAccountNumber: Joi.string().required(),
-    accountName: Joi.string().required()
+    accountName: Joi.string().required(),
+    officeLocation: Joi.string().required(),
+    slackId: Joi.string().required(),
+    twitterId: Joi.string().required(),
+    skypeId: Joi.string().required(),
+    githubId: Joi.string().required(),
 })
-
-// export const loginSchema = Joi.object().keys({
-//     email: Joi.string().email().required(),
-//     password: Joi.string().pattern(new RegExp("^[a-zA-Z0-9]{3,30}$")),
-//     confirmPassword: .
-    // label('Confirm Password').messages({"any.only":"{{label}} does not match"}),
-// })
-// export const roomSchema = Joi.object().keys({
-//     roomType: Joi.string().required(),
-//     roomNumber: Joi.string().required(),
-//     roomPrice: Joi.number().required(),
-//     // roomStatus: Joi.string(),
-//     // roomImage: Joi.string()
-// })

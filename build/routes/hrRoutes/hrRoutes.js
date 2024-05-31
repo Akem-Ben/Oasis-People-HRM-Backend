@@ -21,6 +21,7 @@ const getGraphAttendance_1 = require("../../controllers/hr/getGraphAttendance");
 const viewSingleEmployee_1 = require("../../controllers/hr/viewSingleEmployee");
 const editEmployeeProfile_1 = require("../../controllers/hr/editEmployeeProfile");
 const deleteEmployee_1 = require("../../controllers/hr/deleteEmployee");
+const changeEmployeeImage_1 = require("../../controllers/hr/changeEmployeeImage");
 const router = express_1.default.Router();
 router.post('/register', createHR_1.adminRegister);
 router.post('/login', loginHr_1.login);
@@ -37,4 +38,5 @@ router.get('/graph-attendance', authorization_1.hrAuthoriser, getGraphAttendance
 router.get('/single-employee/:id', authorization_1.hrAuthoriser, viewSingleEmployee_1.viewSingleEmployee);
 router.put('/edit-employee/:id', authorization_1.hrAuthoriser, editEmployeeProfile_1.updateEmployeeProfile);
 router.delete('/delete/:id', authorization_1.hrAuthoriser, deleteEmployee_1.deleteEmployee);
+router.put('/change-employee-image/:id', authorization_1.hrAuthoriser, cloudinaryUpload_1.upload.single('image'), changeEmployeeImage_1.changeEmployeeImage);
 exports.default = router;

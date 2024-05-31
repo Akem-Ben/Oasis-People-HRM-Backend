@@ -9,14 +9,20 @@ export const login = async(request:Request,response:Response) => {
 
         const {email, password } = request.body;
 
+        if(!email.includes('@oasis.com')){
+            return response.status(400).json({
+                message: "Invalid work email, use your work email please"
+            });
+        }
+
         if( !email || !password){
             return response.status(400).json({
                 message: "All fields are required"
             });
         }
 
-        const findAdmin: any = await HR.findOne({email});
-        const findEmployee: any = await Employee.findOne({email});
+        const findAdmin: any = await HR.findOne({workEmail:email});
+        const findEmployee: any = await Employee.findOne({workEmail:email});
 
         if(!findAdmin && !findEmployee){
             return response.status(400).json({

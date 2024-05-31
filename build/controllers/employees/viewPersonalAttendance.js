@@ -15,9 +15,21 @@ const viewPersonalAttendanceRecord = async (request, response) => {
                 attendance
             });
         }
+        let lateDays = 0;
+        let onTimeDays = 0;
+        attendance.forEach((record) => {
+            if (record.clockInStatus === 'late') {
+                lateDays += 1;
+            }
+            else if (record.clockInStatus === 'on-time') {
+                onTimeDays += 1;
+            }
+        });
         return response.status(200).json({
             message: 'attendance records found',
-            attendance
+            attendance,
+            lateDays,
+            onTimeDays
         });
     }
     catch (error) {

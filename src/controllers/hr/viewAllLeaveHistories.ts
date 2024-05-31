@@ -23,6 +23,7 @@ export const viewAllLeaveHistories = async(request:JwtPayload, response:Response
 
             return {
                 leaveId: req._id,
+                reason: req.reason,
                 employeeId: employee?._id,
                 dateRequested: formatDate(req.requestDate),
                 employeeFirstName: employee?.firstName,

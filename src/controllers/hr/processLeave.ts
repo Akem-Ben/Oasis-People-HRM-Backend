@@ -26,7 +26,7 @@ export const processEmployeeLeave = async (
       });
     }
 
-    if (approvalStatus === "approved") {
+    if (approvalStatus === "Approved") {
       await Employee.findOneAndUpdate(
         { _id: leave.userId },
         { usedLeaveDays: leave.daysUsed, totalDaysLeft: leave.daysLeft }

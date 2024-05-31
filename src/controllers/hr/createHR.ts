@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';import HR from '../../models/hrModel/hrModel';
-import { generatePassword, hashPassword } from '../../utilities/helpersFunctions';
+import { generatePassword, generateWorkEmail, hashPassword } from '../../utilities/helpersFunctions';
 import { sendMail } from '../../utilities/emailNotification';
 
 
@@ -27,11 +27,14 @@ export const adminRegister = async(request:Request,response:Response) => {
 
         const hashedPassword = await hashPassword(newPassword);
 
+        const employeeWorkEmail = generateWorkEmail(request.body.firstName, request.body.lastName); 
+
         await HR.create({
             firstName,
             lastName,
             email,
             phone,
+            workEmail: employeeWorkEmail,
             password: hashedPassword,
             isManager: true,
             designation: "HR"
@@ -45,7 +48,7 @@ export const adminRegister = async(request:Request,response:Response) => {
             });
         }
 
-        await sendMail(email, newPassword, email);
+        await sendMail(email, newPassword, employeeWorkEmail);
 
         return response.status(200).json({
             message: "Admin Registered",
@@ -53,6 +56,7 @@ export const adminRegister = async(request:Request,response:Response) => {
                 firstName: checkAdmin.firstName,
                 lastName: checkAdmin.lastName,
                 email: checkAdmin.email,
+                workEmail: checkAdmin.workEmail,
                 phone: checkAdmin.phone,
                 designation: checkAdmin.designation
             }

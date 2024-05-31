@@ -6,6 +6,56 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.graphAttendance = void 0;
 const attendance_1 = __importDefault(require("../../models/attendanceModel/attendance"));
 const moment_1 = __importDefault(require("moment"));
+// export const graphAttendance = async(request:JwtPayload, response:Response) => {
+//     try {
+//         const today = moment();
+//         const dayOfWeek = today.isoWeekday();
+//         let startOfWeek: moment.Moment;
+//         let endOfWeek: moment.Moment;
+//         if (dayOfWeek > 5) {
+//           // Weekend, fetch previous week's data
+//           startOfWeek = today.clone().subtract(1, 'weeks').startOf('isoWeek').isoWeekday(1);
+//           endOfWeek = startOfWeek.clone().add(4, 'days');
+//         } else {
+//           // Weekday, fetch current week's data up to today
+//           startOfWeek = today.clone().startOf('isoWeek').isoWeekday(1);
+//           endOfWeek = today.clone();
+//         }
+//         const attendanceData = await Attendance.find({
+//           date: {
+//             $gte: startOfWeek.toDate(),
+//             $lte: endOfWeek.toDate()
+//           }
+//         });
+//         const result = attendanceData.reduce((acc: Record<string, { late_comers: number; early_comers: number }>, item) => {
+//           const day = moment(item.date).format('dddd'); // Get the day name
+//           if (!acc[day]) {
+//             acc[day] = {
+//               late_comers: 0,
+//               early_comers: 0
+//             };
+//           }
+//           const itemSTatus = item.clockInStatus;
+//          item.clockInStatus === 'late' ? acc[day].late_comers ++ : acc[day].early_comers ++;
+//         //   acc[day].early_comers += item.early_comers;
+//           return acc;
+//         }, {});
+//         let attendanceExtractor = Object.values(result);
+//         const lateComersArray: number[] = [];
+//         const earlyComersArray: number[] = [];
+//         attendanceExtractor.forEach(record => {
+//         lateComersArray.push(record.late_comers);
+//         earlyComersArray.push(record.early_comers);
+//         });
+//         return response.status(200).json({
+//             message: 'Graph Attendance data',
+//             lateComersArray,
+//             earlyComersArray
+//         });
+//       } catch (error:any) {
+//         response.status(500).json({ message: error.message });
+//       }
+// }
 const graphAttendance = async (request, response) => {
     try {
         const today = (0, moment_1.default)();
@@ -36,11 +86,26 @@ const graphAttendance = async (request, response) => {
                     early_comers: 0
                 };
             }
-            const itemSTatus = item.clockInStatus;
-            item.clockInStatus === 'late' ? acc[day].late_comers++ : acc[day].early_comers++;
-            //   acc[day].early_comers += item.early_comers;
+            const clockInTime = (0, moment_1.default)(item.clockInTime);
+            const expectedClockInTime = (0, moment_1.default)(item.date).hour(9).minute(0).second(0); // Assuming 9:00 AM is the expected clock-in time
+            if (clockInTime.isBefore(expectedClockInTime)) {
+                acc[day].early_comers++;
+            }
+            else {
+                acc[day].late_comers++;
+            }
             return acc;
         }, {});
+        // Ensure all days of the week are present in the result
+        const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+        daysOfWeek.forEach(day => {
+            if (!result[day]) {
+                result[day] = {
+                    late_comers: 0,
+                    early_comers: 0
+                };
+            }
+        });
         let attendanceExtractor = Object.values(result);
         const lateComersArray = [];
         const earlyComersArray = [];
@@ -48,10 +113,14 @@ const graphAttendance = async (request, response) => {
             lateComersArray.push(record.late_comers);
             earlyComersArray.push(record.early_comers);
         });
+        let earlyNum = earlyComersArray.reduce((a, b) => a + b, 0);
+        let lateNum = lateComersArray.reduce((a, b) => a + b, 0);
         return response.status(200).json({
             message: 'Graph Attendance data',
             lateComersArray,
-            earlyComersArray
+            earlyComersArray,
+            earlyNum,
+            lateNum
         });
     }
     catch (error) {

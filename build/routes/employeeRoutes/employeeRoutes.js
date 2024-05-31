@@ -14,7 +14,7 @@ const viewPersonalAttendance_1 = require("../../controllers/employees/viewPerson
 const viewProfile_1 = require("../../controllers/employees/viewProfile");
 const router = express_1.default.Router();
 router.post('/clock-in', authorization_1.employeeAuthoriser, employeeClockIn_1.employeeClockIn);
-router.put('/clock-out/:id', authorization_1.employeeAuthoriser, employeeClockout_1.employeeClockout);
+router.put('/clock-out', authorization_1.employeeAuthoriser, employeeClockout_1.employeeClockout);
 router.post('/request-leave', authorization_1.employeeAuthoriser, employeeRequestLeave_1.employeeRequestLeave);
 router.get('/view-leave/:id', authorization_1.employeeAuthoriser, viewLeave_1.viewSingleLeave);
 router.get('/view-leave-history', authorization_1.employeeAuthoriser, viewLeaveHistory_1.viewLeaveHistory);

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';import HR from '../../models/hrModel/hrModel';
-import { generateEmployeeID, generatePassword, hashPassword } from '../../utilities/helpersFunctions';
+import { generateEmployeeID, generatePassword, generateWorkEmail, hashPassword } from '../../utilities/helpersFunctions';
 import { sendMail } from '../../utilities/emailNotification';
 import { registerEmployeeSchema } from '../../validators/validators';
 import Employee, { IEmployee } from '../../models/employeeModel/employeeModel';
@@ -7,36 +7,19 @@ import Employee, { IEmployee } from '../../models/employeeModel/employeeModel';
 
 export const createEmployee = async(request:Request,response:Response) => {
     try {
+      
+      const values = Object.values(request.body);
 
-        // const {
-        //     firstName,
-        //     lastName,
-        //     email,
-        //     middleName,
-        //     nextOfKin,
-        //     phone,
-        //     image,
-        //     gender,
-        //     birthDate,
-        //     maritalStatus,
-        //     nationality,
-        //     homeAddress,
-        //     city,
-        //     district,
-        //     zipCode,
-        //     department,
-        //     designation,
-        //     employeeType,
-        //     contractType,
-        //     workingDays,
-        //     hireDate,
-        //     socialAccounts,
-        //     bankBranch,
-        //     bankAccountNumber,
-        //     accountName 
-        // } = request.body;
-
-        // console.log('hi',request.body)
+      for(let key in request.body){
+        if(request.body[key] === ""){
+          if(key === 'image'){
+            continue;
+          }
+          return response.status(400).json({
+              message: `Please all fields are required, the following field is empty: ${key}`
+          });
+        }
+      }
         const validateInput = await registerEmployeeSchema.validateAsync(request.body);        
 
         if (validateInput.error) {
@@ -45,12 +28,12 @@ export const createEmployee = async(request:Request,response:Response) => {
           });
         }
 
-        const findAdmin = await HR.findOne({email:request.body.email});
+        const checkAdminEmail = await HR.findOne({email:request.body.email});
 
-        if(findAdmin){
+        if(checkAdminEmail){
             return response.status(400).json({
                 message: "This user exists as a HR",
-                findAdmin
+                checkAdminEmail
             });
         }
 
@@ -87,16 +70,17 @@ export const createEmployee = async(request:Request,response:Response) => {
             newEmployeeId = generateEmployeeID(lastEmployeeId);
           }
 
+          const employeeWorkEmail = generateWorkEmail(request.body.firstName, request.body.lastName);
+
         await Employee.create({
             ...request.body,
             password: hashedPassword,
-            workEmail: request.body.email,
+            workEmail: employeeWorkEmail,
             employeeId: newEmployeeId,
             image: request.file?.path,
             isManager: false,
             hireDate: new Date(),
             leaveDaysGiven: 21,
-            socialAccounts: JSON.parse(request.body.socialAccounts),
             workingDays: JSON.parse(request.body.workingDays),
             usedLeaveDays: 0,
             totalDaysLeft: 21
@@ -110,11 +94,12 @@ export const createEmployee = async(request:Request,response:Response) => {
             });
         }
 
-        await sendMail(request.body.email, newPassword, request.body.email);
+        await sendMail(request.body.email, newPassword, employeeWorkEmail);
 
         return response.status(200).json({
             message: "Employee Registered",
             employee: {
+                _id: checkEmployee._id,
                 firstName: checkEmployee.firstName,
                 lastName: checkEmployee.lastName,
                 email: checkEmployee.email,
@@ -136,7 +121,6 @@ export const createEmployee = async(request:Request,response:Response) => {
                 contractType: checkEmployee.contractType,
                 workingDays: checkEmployee.workingDays,
                 hireDate: checkEmployee.hireDate,
-                socialAccounts: checkEmployee.socialAccounts,
                 bankBranch: checkEmployee.bankBranch,
                 bankAccountNumber: checkEmployee.bankAccountNumber,
                 accountName: checkEmployee.accountName,

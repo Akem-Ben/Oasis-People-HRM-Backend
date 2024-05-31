@@ -10,6 +10,11 @@ const updateEmployeeProfile = async (request, response) => {
         const userId = request.params.id;
         const { firstName, lastName, phone, address, employmentType, department, contractType } = request.body;
         const user = await employeeModel_1.default.findOne({ _id: userId });
+        if (!firstName && !lastName && !phone && !address && !employmentType && !department && !contractType) {
+            return response.status(400).json({
+                message: "Please select atleast one field to update",
+            });
+        }
         if (!user) {
             return response.status(404).json({
                 message: "Employee not found",

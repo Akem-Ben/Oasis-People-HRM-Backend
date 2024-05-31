@@ -11,7 +11,7 @@ import { viewProfile } from '../../controllers/employees/viewProfile';
 const router = express.Router();
 
 router.post('/clock-in', employeeAuthoriser, employeeClockIn)
-router.put('/clock-out/:id', employeeAuthoriser, employeeClockout)
+router.put('/clock-out', employeeAuthoriser, employeeClockout)
 router.post('/request-leave', employeeAuthoriser, employeeRequestLeave)
 router.get('/view-leave/:id', employeeAuthoriser, viewSingleLeave)
 router.get('/view-leave-history', employeeAuthoriser, viewLeaveHistory)

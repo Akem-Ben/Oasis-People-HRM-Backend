@@ -7,13 +7,45 @@ exports.employeeRequestLeave = void 0;
 const employeeModel_1 = __importDefault(require("../../models/employeeModel/employeeModel"));
 const leave_1 = __importDefault(require("../../models/leaveModel/leave"));
 const hrModel_1 = __importDefault(require("../../models/hrModel/hrModel"));
+const helpersFunctions_1 = require("../../utilities/helpersFunctions");
 const employeeRequestLeave = async (request, response) => {
     try {
-        const { startDate, endDate } = request.body;
+        const { startDate, endDate, reason } = request.body;
+        if (!startDate || !endDate || !reason) {
+            return response.status(400).json({
+                message: 'All details are required.'
+            });
+        }
+        const validate = (0, helpersFunctions_1.leaveDateChecker)(startDate, endDate);
+        if (validate === 'error 1') {
+            return response.status(400).json({
+                message: "Invalid date format.",
+            });
+        }
+        if (validate === 'error 2') {
+            return response.status(400).json({
+                message: "Start date cannot be in the past.",
+            });
+        }
+        if (validate === 'error 3') {
+            return response.status(400).json({
+                message: "End date cannot be in the past.",
+            });
+        }
+        if (validate === 'error 4') {
+            return response.status(400).json({
+                message: "Start date cannot be after end date.",
+            });
+        }
+        if (validate === 'error 5') {
+            return response.status(400).json({
+                message: "Start date and end date cannot be the same.",
+            });
+        }
         const employeeId = request.user._id;
         if (!employeeId) {
             return response.status(400).json({
-                message: "Login again to clock in",
+                message: "Login again to request leave",
             });
         }
         const employee = await employeeModel_1.default.findOne({ _id: employeeId });
@@ -61,6 +93,7 @@ const employeeRequestLeave = async (request, response) => {
             requestDate: new Date(),
             startDate: startLeaveDate,
             endDate: endLeaveDate,
+            reason,
             status: "Pending",
             totalDays: totalLeaveDays,
             daysUsed: employee.usedLeaveDays + totalLeaveDays,

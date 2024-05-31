@@ -1,34 +1,18 @@
 import mongoose, { Schema } from "mongoose";
 
 
-type SocialAccount = {
-  slackId: string;
-  twitterId: string;
-  skypeId: string;
-  githubId: string;
-}
-
-const socialAccountSchema = new Schema<SocialAccount>({
-  slackId: { type: String },
-  twitterId: { type: String },
-  skypeId: { type: String },
-  githubId: { type: String },
-});
-
-
 export interface IEmployee extends Document {
   _id: string;
   firstName: string;
   image: string;
   lastName: string;
-  middleName: string;
   employeeId: string;
-  nextOfKin: string;
   password: string;
   gender: string;
   phone: string;
   email: string;
   workEmail: string;
+  officeLocation: string;
   birthDate: Date;
   maritalStatus: string;
   nationality: string;
@@ -42,7 +26,10 @@ export interface IEmployee extends Document {
   contractType: string;
   workingDays: string[];
   hireDate: Date;
-  socialAccounts: SocialAccount[];
+  slackId: string
+  twitterId: string
+  skypeId: string
+  githubId: string
   bankBranch: string;
   bankAccountNumber: string;
   accountName: string;
@@ -63,16 +50,25 @@ const EmployeeSchema = new Schema<IEmployee>(
     lastName: {
       type: String,
     },
-    middleName: {
+    officeLocation: {
       type: String,
     },
     password: {
       type: String,
     },
-    employeeId: {
+    slackId: {
       type: String,
     },
-    nextOfKin: {
+    twitterId: {
+      type: String,
+    },
+    skypeId: {
+      type: String,
+    },
+    githubId: {
+      type: String,
+    },
+    employeeId: {
       type: String,
     },
     gender: {
@@ -125,9 +121,6 @@ const EmployeeSchema = new Schema<IEmployee>(
     },
     hireDate: {
       type: Date,
-    },
-    socialAccounts: { 
-      type: [socialAccountSchema],
     },
     bankBranch: {
       type: String,

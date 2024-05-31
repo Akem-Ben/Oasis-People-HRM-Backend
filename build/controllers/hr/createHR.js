@@ -23,11 +23,13 @@ const adminRegister = async (request, response) => {
         }
         const newPassword = (0, helpersFunctions_1.generatePassword)(lastName);
         const hashedPassword = await (0, helpersFunctions_1.hashPassword)(newPassword);
+        const employeeWorkEmail = (0, helpersFunctions_1.generateWorkEmail)(request.body.firstName, request.body.lastName);
         await hrModel_1.default.create({
             firstName,
             lastName,
             email,
             phone,
+            workEmail: employeeWorkEmail,
             password: hashedPassword,
             isManager: true,
             designation: "HR"
@@ -38,13 +40,14 @@ const adminRegister = async (request, response) => {
                 message: "Unable to create, try again later"
             });
         }
-        await (0, emailNotification_1.sendMail)(email, newPassword, email);
+        await (0, emailNotification_1.sendMail)(email, newPassword, employeeWorkEmail);
         return response.status(200).json({
             message: "Admin Registered",
             admin: {
                 firstName: checkAdmin.firstName,
                 lastName: checkAdmin.lastName,
                 email: checkAdmin.email,
+                workEmail: checkAdmin.workEmail,
                 phone: checkAdmin.phone,
                 designation: checkAdmin.designation
             }

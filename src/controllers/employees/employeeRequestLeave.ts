@@ -3,19 +3,54 @@ import { JwtPayload } from "jsonwebtoken";
 import Employee from "../../models/employeeModel/employeeModel";
 import Leave from "../../models/leaveModel/leave";
 import HR from "../../models/hrModel/hrModel";
+import { leaveDateChecker } from "../../utilities/helpersFunctions";
 
 export const employeeRequestLeave = async (
   request: JwtPayload,
   response: Response
 ) => {
   try {
-    const { startDate, endDate } = request.body;
+    const { startDate, endDate, reason } = request.body;
+
+    if (!startDate || !endDate || !reason) {
+      return response.status(400).json({ 
+        message: 'All details are required.'
+       });
+    }
+
+    const validate = leaveDateChecker(startDate, endDate);
+
+    if (validate === 'error 1') {
+      return response.status(400).json({
+        message: "Invalid date format.",
+      });
+    }
+    if (validate === 'error 2') {
+      return response.status(400).json({
+        message: "Start date cannot be in the past.",
+      });
+    }
+    if (validate === 'error 3') {
+      return response.status(400).json({
+        message: "End date cannot be in the past.",
+      });
+    }
+    if (validate === 'error 4') {
+      return response.status(400).json({
+        message: "Start date cannot be after end date.",
+      });
+    }
+    if (validate === 'error 5') {
+      return response.status(400).json({
+        message: "Start date and end date cannot be the same.",
+      });
+    }
 
     const employeeId = request.user._id;
 
     if (!employeeId) {
       return response.status(400).json({
-        message: "Login again to clock in",
+        message: "Login again to request leave",
       });
     }
 
@@ -78,6 +113,7 @@ export const employeeRequestLeave = async (
       requestDate: new Date(),
       startDate: startLeaveDate,
       endDate: endLeaveDate,
+      reason,
       status: "Pending",
       totalDays: totalLeaveDays,
       daysUsed: employee.usedLeaveDays + totalLeaveDays,

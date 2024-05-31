@@ -7,7 +7,6 @@ export const viewSingleEmployee = async(request:JwtPayload, response:Response) =
     try{
 
         const employeeId = request.params.id
-        console.log(employeeId)
         const employee = await Employee.findOne({_id:employeeId})
 
         if(!employee){

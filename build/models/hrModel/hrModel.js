@@ -28,6 +28,9 @@ const HrSchema = new mongoose_1.Schema({
     firstName: {
         type: String,
     },
+    workEmail: {
+        type: String,
+    },
     phone: {
         type: String,
     },

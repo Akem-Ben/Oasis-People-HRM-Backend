@@ -18,6 +18,12 @@ export const updateEmployeeProfile = async(request:JwtPayload,response:Response)
 
     const user = await Employee.findOne({_id:userId})
 
+    if(!firstName && !lastName && !phone && !address && !employmentType && !department && !contractType){
+        return response.status(400).json({
+            message: "Please select atleast one field to update",
+          });
+    }
+
     if (!user) {
         return response.status(404).json({
           message: "Employee not found",
@@ -61,6 +67,7 @@ export const updateEmployeeProfile = async(request:JwtPayload,response:Response)
       );
 
     const newEmployee = await Employee.findOne({_id:userId})
+
 
     return response.status(200).json({
       message: "Employee Details Updated Successfully",

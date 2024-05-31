@@ -3,9 +3,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.viewSingleEmployee = void 0;
+exports.changeEmployeeImage = void 0;
 const employeeModel_1 = __importDefault(require("../../models/employeeModel/employeeModel"));
-const viewSingleEmployee = async (request, response) => {
+const changeEmployeeImage = async (request, response) => {
     try {
         const employeeId = request.params.id;
         const employee = await employeeModel_1.default.findOne({ _id: employeeId });
@@ -14,9 +14,18 @@ const viewSingleEmployee = async (request, response) => {
                 message: 'employee not found',
             });
         }
+        const image = request.file?.path;
+        console.log(image);
+        if (!image || image === '') {
+            return response.status(400).json({
+                message: 'Please upload an image'
+            });
+        }
+        await employeeModel_1.default.updateOne({ _id: employeeId }, { image: image });
+        const updatedEmployee = await employeeModel_1.default.findOne({ _id: employee });
         return response.status(200).json({
-            message: 'employee found',
-            employee
+            message: 'employee image changed successfully',
+            updatedEmployee
         });
     }
     catch (error) {
@@ -26,4 +35,4 @@ const viewSingleEmployee = async (request, response) => {
         });
     }
 };
-exports.viewSingleEmployee = viewSingleEmployee;
+exports.changeEmployeeImage = changeEmployeeImage;

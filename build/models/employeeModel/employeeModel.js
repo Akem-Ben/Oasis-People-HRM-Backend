@@ -24,12 +24,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
-const socialAccountSchema = new mongoose_1.Schema({
-    slackId: { type: String },
-    twitterId: { type: String },
-    skypeId: { type: String },
-    githubId: { type: String },
-});
 const EmployeeSchema = new mongoose_1.Schema({
     firstName: {
         type: String,
@@ -40,16 +34,25 @@ const EmployeeSchema = new mongoose_1.Schema({
     lastName: {
         type: String,
     },
-    middleName: {
+    officeLocation: {
         type: String,
     },
     password: {
         type: String,
     },
-    employeeId: {
+    slackId: {
         type: String,
     },
-    nextOfKin: {
+    twitterId: {
+        type: String,
+    },
+    skypeId: {
+        type: String,
+    },
+    githubId: {
+        type: String,
+    },
+    employeeId: {
         type: String,
     },
     gender: {
@@ -102,9 +105,6 @@ const EmployeeSchema = new mongoose_1.Schema({
     },
     hireDate: {
         type: Date,
-    },
-    socialAccounts: {
-        type: [socialAccountSchema],
     },
     bankBranch: {
         type: String,

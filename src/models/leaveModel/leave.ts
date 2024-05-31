@@ -5,6 +5,7 @@ export interface ILeave {
   userId: string;
   requestDate: Date;
   startDate: Date;
+  reason: string;
   endDate: Date;
   status: string;
   totalDays: number;
@@ -30,6 +31,9 @@ const LeaveSchema = new Schema<ILeave>(
     status: {
         type: String,
     },
+    reason: {
+      type: String,
+  },
     totalDays: {
         type: Number,
     },

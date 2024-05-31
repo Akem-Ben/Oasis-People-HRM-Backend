@@ -11,45 +11,28 @@ const validators_1 = require("../../validators/validators");
 const employeeModel_1 = __importDefault(require("../../models/employeeModel/employeeModel"));
 const createEmployee = async (request, response) => {
     try {
-        // const {
-        //     firstName,
-        //     lastName,
-        //     email,
-        //     middleName,
-        //     nextOfKin,
-        //     phone,
-        //     image,
-        //     gender,
-        //     birthDate,
-        //     maritalStatus,
-        //     nationality,
-        //     homeAddress,
-        //     city,
-        //     district,
-        //     zipCode,
-        //     department,
-        //     designation,
-        //     employeeType,
-        //     contractType,
-        //     workingDays,
-        //     hireDate,
-        //     socialAccounts,
-        //     bankBranch,
-        //     bankAccountNumber,
-        //     accountName 
-        // } = request.body;
-        // console.log('hi',request.body)
+        const values = Object.values(request.body);
+        for (let key in request.body) {
+            if (request.body[key] === "") {
+                if (key === 'image') {
+                    continue;
+                }
+                return response.status(400).json({
+                    message: `Please all fields are required, the following field is empty: ${key}`
+                });
+            }
+        }
         const validateInput = await validators_1.registerEmployeeSchema.validateAsync(request.body);
         if (validateInput.error) {
             return response.status(400).json({
                 Error: validateInput.error.details[0].message,
             });
         }
-        const findAdmin = await hrModel_1.default.findOne({ email: request.body.email });
-        if (findAdmin) {
+        const checkAdminEmail = await hrModel_1.default.findOne({ email: request.body.email });
+        if (checkAdminEmail) {
             return response.status(400).json({
                 message: "This user exists as a HR",
-                findAdmin
+                checkAdminEmail
             });
         }
         const findEmployee = await employeeModel_1.default.findOne({ email: request.body.email });
@@ -76,16 +59,16 @@ const createEmployee = async (request, response) => {
             lastEmployeeId = sortedEmployeeIds[0].toString();
             newEmployeeId = (0, helpersFunctions_1.generateEmployeeID)(lastEmployeeId);
         }
+        const employeeWorkEmail = (0, helpersFunctions_1.generateWorkEmail)(request.body.firstName, request.body.lastName);
         await employeeModel_1.default.create({
             ...request.body,
             password: hashedPassword,
-            workEmail: request.body.email,
+            workEmail: employeeWorkEmail,
             employeeId: newEmployeeId,
             image: request.file?.path,
             isManager: false,
             hireDate: new Date(),
             leaveDaysGiven: 21,
-            socialAccounts: JSON.parse(request.body.socialAccounts),
             workingDays: JSON.parse(request.body.workingDays),
             usedLeaveDays: 0,
             totalDaysLeft: 21
@@ -96,10 +79,11 @@ const createEmployee = async (request, response) => {
                 message: "Unable to create, try again later"
             });
         }
-        await (0, emailNotification_1.sendMail)(request.body.email, newPassword, request.body.email);
+        await (0, emailNotification_1.sendMail)(request.body.email, newPassword, employeeWorkEmail);
         return response.status(200).json({
             message: "Employee Registered",
             employee: {
+                _id: checkEmployee._id,
                 firstName: checkEmployee.firstName,
                 lastName: checkEmployee.lastName,
                 email: checkEmployee.email,
@@ -121,7 +105,6 @@ const createEmployee = async (request, response) => {
                 contractType: checkEmployee.contractType,
                 workingDays: checkEmployee.workingDays,
                 hireDate: checkEmployee.hireDate,
-                socialAccounts: checkEmployee.socialAccounts,
                 bankBranch: checkEmployee.bankBranch,
                 bankAccountNumber: checkEmployee.bankAccountNumber,
                 accountName: checkEmployee.accountName,

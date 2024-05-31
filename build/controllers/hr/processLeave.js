@@ -21,7 +21,7 @@ const processEmployeeLeave = async (request, response) => {
                 message: "Leave not found",
             });
         }
-        if (approvalStatus === "approved") {
+        if (approvalStatus === "Approved") {
             await employeeModel_1.default.findOneAndUpdate({ _id: leave.userId }, { usedLeaveDays: leave.daysUsed, totalDaysLeft: leave.daysLeft });
         }
         const test = await employeeModel_1.default.findOne({ _id: leave.userId });

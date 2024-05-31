@@ -21,6 +21,7 @@ const viewAllLeaveHistories = async (request, response) => {
             const employee = await employeeModel_1.default.findOne({ _id: req.userId });
             return {
                 leaveId: req._id,
+                reason: req.reason,
                 employeeId: employee?._id,
                 dateRequested: (0, helpersFunctions_1.formatDate)(req.requestDate),
                 employeeFirstName: employee?.firstName,

@@ -11,13 +11,18 @@ const employeeModel_1 = __importDefault(require("../../models/employeeModel/empl
 const login = async (request, response) => {
     try {
         const { email, password } = request.body;
+        if (!email.includes('@oasis.com')) {
+            return response.status(400).json({
+                message: "Invalid work email, use your work email please"
+            });
+        }
         if (!email || !password) {
             return response.status(400).json({
                 message: "All fields are required"
             });
         }
-        const findAdmin = await hrModel_1.default.findOne({ email });
-        const findEmployee = await employeeModel_1.default.findOne({ email });
+        const findAdmin = await hrModel_1.default.findOne({ workEmail: email });
+        const findEmployee = await employeeModel_1.default.findOne({ workEmail: email });
         if (!findAdmin && !findEmployee) {
             return response.status(400).json({
                 message: `${email} does not exist`

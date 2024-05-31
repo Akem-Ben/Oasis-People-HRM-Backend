@@ -16,6 +16,7 @@ import { graphAttendance } from '../../controllers/hr/getGraphAttendance';
 import { viewSingleEmployee } from '../../controllers/hr/viewSingleEmployee';
 import { updateEmployeeProfile } from '../../controllers/hr/editEmployeeProfile';
 import { deleteEmployee } from '../../controllers/hr/deleteEmployee';
+import { changeEmployeeImage } from '../../controllers/hr/changeEmployeeImage';
 
 const router = express.Router();
 
@@ -35,12 +36,7 @@ router.get('/graph-attendance', hrAuthoriser, graphAttendance)
 router.get('/single-employee/:id', hrAuthoriser, viewSingleEmployee)
 router.put('/edit-employee/:id', hrAuthoriser, updateEmployeeProfile)
 router.delete('/delete/:id', hrAuthoriser, deleteEmployee)
-
-
-
-
-
-
+router.put('/change-employee-image/:id', hrAuthoriser, upload.single('image'), changeEmployeeImage)
 
 
 

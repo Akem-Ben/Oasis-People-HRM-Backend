@@ -3,11 +3,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.daysBetween = exports.formatDate = exports.formatTimeFromISO = exports.confirmCheckIn = exports.checkClockOutTime = exports.checkClockInTime = exports.setHours = exports.generateEmployeeID = exports.tokenGenerator = exports.hashPassword = exports.generatePassword = void 0;
+exports.leaveDateChecker = exports.generateWorkEmail = exports.daysBetween = exports.formatDate = exports.formatTimeFromISO = exports.confirmCheckInCheckOut = exports.confirmCheckIn = exports.checkClockOutTime = exports.checkClockInTime = exports.setHours = exports.generateEmployeeID = exports.tokenGenerator = exports.hashPassword = exports.generatePassword = void 0;
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const generatePassword = (last_name) => {
-    const newPassword = (last_name += Math.floor(1000 + Math.random() * 90000));
+    let last_name_edit = last_name.toLowerCase();
+    const newPassword = (last_name_edit += Math.floor(1000 + Math.random() * 90000));
     return newPassword;
 };
 exports.generatePassword = generatePassword;
@@ -78,6 +79,18 @@ const confirmCheckIn = (checkIns, today) => {
     return hasCheckedInToday;
 };
 exports.confirmCheckIn = confirmCheckIn;
+const confirmCheckInCheckOut = (checkIns, today) => {
+    // Normalize the 'today' date to remove the time part
+    today.setHours(0, 0, 0, 0);
+    const foundCheckIn = checkIns.find((checkIn) => {
+        const checkInDate = new Date(checkIn.date); // Assuming each check-in has a 'date' property
+        // Normalize the check-in date to remove the time part
+        checkInDate.setHours(0, 0, 0, 0);
+        return checkInDate.getTime() === today.getTime();
+    });
+    return foundCheckIn;
+};
+exports.confirmCheckInCheckOut = confirmCheckInCheckOut;
 function formatTimeFromISO(isoString) {
     // Parse the ISO string to a Date object
     const date = new Date(isoString);
@@ -116,3 +129,36 @@ const daysBetween = (startDate, endDate) => {
     return finaldays === 1 ? `${finaldays} day` : `${finaldays} days`;
 };
 exports.daysBetween = daysBetween;
+const generateWorkEmail = (firstName, lastName) => {
+    const lastNameInitial = lastName.substring(0, 3).toLowerCase();
+    const newEmail = `${firstName.toLowerCase()}.${lastNameInitial.toLowerCase()}${Math.floor(100 + Math.random() * 900)}@oasis.com`;
+    return newEmail;
+};
+exports.generateWorkEmail = generateWorkEmail;
+const leaveDateChecker = (startDate, endDate) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    if (start.getTime() === end.getTime()) {
+        return 'error 5';
+        // return res.status(400).json({ error: 'Start date and end date cannot be the same.' });
+    }
+    if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+        return 'error 1';
+        // return res.status(400).json({ error: 'Invalid date format.' });
+    }
+    if (start < today) {
+        return 'error 2';
+        // return res.status(400).json({ error: 'Start date cannot be in the past.' });
+    }
+    if (end < today) {
+        return 'error 3';
+        // return res.status(400).json({ error: 'End date cannot be in the past.' });
+    }
+    if (start > end) {
+        return 'error 4';
+        // return res.status(400).json({ error: 'Start date cannot be after end date.' });
+    }
+};
+exports.leaveDateChecker = leaveDateChecker;

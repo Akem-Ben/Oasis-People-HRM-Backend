@@ -5,6 +5,7 @@ export interface IHr {
   firstName: string;
   lastName: string;
   email: string;
+  workEmail: string;
   password: string;
   designation: string;
   isManager: boolean;
@@ -14,6 +15,9 @@ export interface IHr {
 const HrSchema = new Schema<IHr>(
   {
     firstName: {
+      type: String,
+    },
+    workEmail: {
       type: String,
     },
     phone: {

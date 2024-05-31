@@ -1,63 +1,76 @@
-import {Response} from "express";
+import { Response } from "express";
 import { JwtPayload } from "jsonwebtoken";
 import Attendance from "../../models/attendanceModel/attendance";
-import { checkClockOutTime } from "../../utilities/helpersFunctions";
+import {
+  checkClockOutTime,
+  confirmCheckInCheckOut,
+  setHours,
+} from "../../utilities/helpersFunctions";
 
-export const employeeClockout = async(request:JwtPayload, response:Response) => {
-    try {
+export const employeeClockout = async (
+  request: JwtPayload,
+  response: Response
+) => {
+  try {
+    const thisDay = new Date();
 
-        const employeeId = request.user._id;
+    const getToday = setHours(thisDay);
 
-        const attendanceId = request.params.id;
+    const employeeId = request.user._id;
 
-        if(!attendanceId || attendanceId === ""){
-            return response.status(400).json({
-                message: "You have not clocked-in today"
-            });
+    const checkAttendance = await Attendance.find({ employeeId });
+
+    if (checkAttendance.length > 0) {
+      const checkInsArr: any = checkAttendance.map(
+        (checkIn: any) => checkIn.date
+      );
+      const confirmEmployeeCheckIn = confirmCheckInCheckOut(
+        checkAttendance,
+        getToday
+      );
+
+      if (confirmEmployeeCheckIn) {
+        if (confirmEmployeeCheckIn.clockOutTime !== null) {
+          return response.status(400).json({
+            message: "You have already clocked out",
+          });
         }
 
-        const checkAttendance = await Attendance.findOne({employeeId, _id:attendanceId});
+        const employeeAttendanceStatus = checkClockOutTime(getToday);
 
-        if(!checkAttendance){
-            return response.status(400).json({
-                message: "You have not clockedIn today"
-            });
+        await Attendance.updateOne(
+          { _id: confirmEmployeeCheckIn._id },
+          {
+            $set: {
+              clockOutTime: thisDay,
+              clockOutStatus: employeeAttendanceStatus,
+            },
+          }
+        );
+
+        const attestCheckIn = await Attendance.findOne({
+          _id: confirmEmployeeCheckIn._id,
+        });
+
+        if (!attestCheckIn?.clockOutTime) {
+          return response.status(400).json({
+            message: "Unable to clock out, try again",
+          });
         }
 
-        if(checkAttendance.clockOutTime !== null){
-            return response.status(400).json({
-                message: "You have already clocked out"
-            });
-        }
-        
-        if(!employeeId){
-            return response.status(400).json({
-                message: "Login again to clock out"
-            });
-        }
-
-        const today = new Date();
-
-        const employeeCheckOutStatus = checkClockOutTime(today);
-
-        await Attendance.updateOne({ _id: attendanceId }, { $set: { clockOutTime: today, clockOutStatus: employeeCheckOutStatus } });
-
-        const attestCheckOut = await Attendance.findOne({_id:attendanceId});
-
-        if(!attestCheckOut){
-            return response.status(400).json({
-                message: "Unable to clock out, try again"
-            });
-        }
         return response.status(200).json({
-            message: "Clock-Out Successful, Good Bye!",
-            checkOut: attestCheckOut
+          message: "Clock-Out Successful",
+          attestCheckIn,
         });
-
-    } catch (error:any) {
-        console.log(error.message);
-        return response.status(500).json({
-            message: "Internal Server Error"
-        });
+      }
     }
-}
+    return response.status(400).json({
+      message: "You have not clockedIn today",
+    });
+  } catch (error: any) {
+    console.log(error.message);
+    return response.status(500).json({
+      message: "Internal Server Error",
+    });
+  }
+};

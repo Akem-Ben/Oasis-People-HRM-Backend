@@ -3,7 +3,8 @@ import jwt from 'jsonwebtoken'
 
 
 export const generatePassword = (last_name: string) => {
-    const newPassword = (last_name += Math.floor(1000 + Math.random() * 90000));
+    let last_name_edit = last_name.toLowerCase();
+    const newPassword = (last_name_edit += Math.floor(1000 + Math.random() * 90000));
     return newPassword;
   };
 
@@ -66,13 +67,29 @@ export const generateEmployeeID = (oldCode: string) => {
   };
 
   export const confirmCheckIn = (checkIns:Date[], today:Date) => {
-  const hasCheckedInToday = checkIns.some(checkIn => {
-    const checkInDate = new Date(checkIn);
+    const hasCheckedInToday = checkIns.some(checkIn => {
+      const checkInDate = new Date(checkIn);
+      checkInDate.setHours(0, 0, 0, 0);
+      return checkInDate.getTime() === today.getTime();
+    });
+    return hasCheckedInToday;
+  }
+
+export const confirmCheckInCheckOut = (checkIns:any, today:Date) => {
+  // Normalize the 'today' date to remove the time part
+  today.setHours(0, 0, 0, 0);
+
+  const foundCheckIn = checkIns.find((checkIn:any) => {
+    const checkInDate = new Date(checkIn.date); // Assuming each check-in has a 'date' property
+    // Normalize the check-in date to remove the time part
     checkInDate.setHours(0, 0, 0, 0);
+
     return checkInDate.getTime() === today.getTime();
   });
-  return hasCheckedInToday;
-}
+
+  return foundCheckIn;
+};
+
 
 
 export function formatTimeFromISO(isoString: Date): string {
@@ -112,4 +129,40 @@ export const daysBetween = (startDate: Date, endDate: Date): string => {
   // Return the number of days
  const finaldays = Math.round(diffDays);
  return finaldays === 1 ? `${finaldays} day` : `${finaldays} days`
+}
+
+
+export const generateWorkEmail = (firstName:string, lastName: string) => {
+  const lastNameInitial = lastName.substring(0, 3).toLowerCase();
+  const newEmail = `${firstName.toLowerCase()}.${lastNameInitial.toLowerCase() }${Math.floor(100 + Math.random() * 900)}@oasis.com`
+  return newEmail;
+};
+
+
+export const leaveDateChecker = (startDate: Date, endDate: Date) => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+
+  if(start.getTime() === end.getTime()){
+    return 'error 5'
+    // return res.status(400).json({ error: 'Start date and end date cannot be the same.' });
+  }
+  if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+    return 'error 1'
+    // return res.status(400).json({ error: 'Invalid date format.' });
+  }
+  if (start < today) {
+    return 'error 2'
+    // return res.status(400).json({ error: 'Start date cannot be in the past.' });
+  }
+  if (end < today) {
+    return 'error 3'
+    // return res.status(400).json({ error: 'End date cannot be in the past.' });
+  }
+  if (start > end) {
+    return 'error 4'
+    // return res.status(400).json({ error: 'Start date cannot be after end date.' });
+  }
 }
