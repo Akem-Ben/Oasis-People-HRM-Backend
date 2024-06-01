@@ -31,8 +31,7 @@ const generateEmployeeID = (oldCode) => {
         newCode = `OAS-EMP-10101`;
     }
     else {
-        const oldCodeExtractor = oldCode.split("-")[2];
-        newCode = `OAS-EMP-${Number(oldCodeExtractor) + 1}`;
+        newCode = `OAS-EMP-${Number(oldCode) + 1}`;
     }
     return newCode;
 };

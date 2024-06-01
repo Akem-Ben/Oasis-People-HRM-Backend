@@ -14,11 +14,11 @@ const createEmployee = async (request, response) => {
         const values = Object.values(request.body);
         for (let key in request.body) {
             if (request.body[key] === "") {
-                if (key === 'image') {
+                if (key === "image") {
                     continue;
                 }
                 return response.status(400).json({
-                    message: `Please all fields are required, the following field is empty: ${key}`
+                    message: `Please all fields are required, the following field is empty: ${key}`,
                 });
             }
         }
@@ -32,14 +32,14 @@ const createEmployee = async (request, response) => {
         if (checkAdminEmail) {
             return response.status(400).json({
                 message: "This user exists as a HR",
-                checkAdminEmail
+                checkAdminEmail,
             });
         }
         const findEmployee = await employeeModel_1.default.findOne({ email: request.body.email });
         if (findEmployee) {
             return response.status(400).json({
                 message: "This employee already exists",
-                findEmployee
+                findEmployee,
             });
         }
         const newPassword = (0, helpersFunctions_1.generatePassword)(request.body.lastName);
@@ -51,11 +51,11 @@ const createEmployee = async (request, response) => {
             newEmployeeId = (0, helpersFunctions_1.generateEmployeeID)(lastEmployeeId);
         }
         else {
-            let agentIds = allEmployees.map((employee) => {
-                const max_id_number = employee.employeeId.split("-")[2];
-                return Number(max_id_number);
+            let employeeIds = allEmployees.map((employee) => {
+                const Id_number = employee.employeeId.split("-")[2];
+                return Number(Id_number);
             });
-            let sortedEmployeeIds = agentIds.sort((id1, id2) => id2 - id1);
+            let sortedEmployeeIds = employeeIds.sort((id1, id2) => id2 - id1);
             lastEmployeeId = sortedEmployeeIds[0].toString();
             newEmployeeId = (0, helpersFunctions_1.generateEmployeeID)(lastEmployeeId);
         }
@@ -71,12 +71,12 @@ const createEmployee = async (request, response) => {
             leaveDaysGiven: 21,
             workingDays: JSON.parse(request.body.workingDays),
             usedLeaveDays: 0,
-            totalDaysLeft: 21
+            totalDaysLeft: 21,
         });
         const checkEmployee = await employeeModel_1.default.findOne({ email: request.body.email });
         if (!checkEmployee) {
             return response.status(400).json({
-                message: "Unable to create, try again later"
+                message: "Unable to create, try again later",
             });
         }
         await (0, emailNotification_1.sendMail)(request.body.email, newPassword, employeeWorkEmail);
@@ -111,13 +111,13 @@ const createEmployee = async (request, response) => {
                 leaveDaysGiven: checkEmployee.leaveDaysGiven,
                 usedLeaveDays: checkEmployee.usedLeaveDays,
                 totalDaysLeft: checkEmployee.totalDaysLeft,
-            }
+            },
         });
     }
     catch (error) {
         console.log(error.message);
         return response.status(500).json({
-            message: "Internal Server Error"
+            message: "Internal Server Error",
         });
     }
 };
