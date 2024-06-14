@@ -26,6 +26,12 @@ export const processEmployeeLeave = async (
       });
     }
 
+    if(leave.status === "Approved" || leave.status === "Rejected") {
+      return response.status(400).json({
+        message: "Leave has already been processed",
+      });
+    }
+    
     if (approvalStatus === "Approved") {
       await Employee.findOneAndUpdate(
         { _id: leave.userId },

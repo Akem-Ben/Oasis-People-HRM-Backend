@@ -21,6 +21,11 @@ const processEmployeeLeave = async (request, response) => {
                 message: "Leave not found",
             });
         }
+        if (leave.status === "Approved" || leave.status === "Rejected") {
+            return response.status(400).json({
+                message: "Leave has already been processed",
+            });
+        }
         if (approvalStatus === "Approved") {
             await employeeModel_1.default.findOneAndUpdate({ _id: leave.userId }, { usedLeaveDays: leave.daysUsed, totalDaysLeft: leave.daysLeft });
         }
