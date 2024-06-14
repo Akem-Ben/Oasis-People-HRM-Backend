@@ -17,7 +17,7 @@ export const allAttendanceHistories = async(request:JwtPayload, response:Respons
 
         allAttendance.sort((item1:any, item2:any)=> item2.date - item1.date)
 
-        const attendanceHistory = await Promise.all(allAttendance.map(async (attendance)=>{
+        const attendanceHistory:any = await Promise.all(allAttendance.map(async (attendance)=>{
             const employee = await Employee.findOne({_id:attendance.employeeId})
 
             return {
